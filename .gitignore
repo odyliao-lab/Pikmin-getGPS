@@ -1,0 +1,14 @@
+build/
+_inspect/
+*.log
+*.png
+*.xml
+*.apk
+*.aab
+*.so
+*.zip
+!dist/*.zip
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
