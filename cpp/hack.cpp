@@ -15,18 +15,18 @@
 
 namespace {
 
-constexpr char kTargetVersion[] = "149.0";
-constexpr int kTargetVersionCode = 1784082813;
+constexpr char kTargetVersion[] = "150.0";
+constexpr int kTargetVersionCode = 1784893753;
 // ExpeditionListItem.<Start>b__34_0(Unit), the actual button callback. The
 // compiler duplicated OnClick into this lambda, so hooking OnClick itself
 // does not observe taps.
-constexpr uintptr_t kRvaListItemOnClick = 0x5E2E4F8;
-constexpr uintptr_t kRvaGetSpawnLocation = 0x5E519EC;
+constexpr uintptr_t kRvaListItemOnClick = 0x5E4AFA4;
+constexpr uintptr_t kRvaGetSpawnLocation = 0x5E6E954;
 constexpr uintptr_t kListItemCurrentTaskOffset = 0xD8;
 
 constexpr uint8_t kListItemOnClickSignature[] = {
     0xFF, 0xC3, 0x00, 0xD1, 0xFE, 0x57, 0x01, 0xA9,
-    0xF4, 0x4F, 0x02, 0xA9, 0x74, 0x8F, 0x04, 0xB0
+    0xF4, 0x4F, 0x02, 0xA9, 0x54, 0x90, 0x04, 0xD0
 };
 
 struct LatLng {

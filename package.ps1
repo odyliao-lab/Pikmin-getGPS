@@ -8,7 +8,7 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 if (-not $BuildRoot) { $BuildRoot = Join-Path $projectRoot 'build' }
 if (-not $OutputPath) {
-    $OutputPath = Join-Path $projectRoot 'dist\pikmin-gps-copy-v149-r9.zip'
+    $OutputPath = Join-Path $projectRoot 'dist\pikmin-gps-copy-v150-r10.zip'
 }
 
 $templateRoot = Join-Path $projectRoot 'template\magisk_module'
@@ -41,8 +41,8 @@ Copy-Item -LiteralPath $binary `
 $moduleProperty = @(
     'id=zygisk_pikmin_gps_copy'
     'name=Pikmin GPS Copy'
-    'version=v149.0-r9'
-    'versionCode=149009'
+    'version=v150.0-r10'
+    'versionCode=150010'
     'author=odyliao-lab'
     'description=Copy the selected Pikmin Bloom expedition GPS to Android clipboard'
 ) -join "`n"
