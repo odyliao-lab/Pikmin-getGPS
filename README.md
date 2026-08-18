@@ -33,8 +33,8 @@ selected **Pikmin Bloom expedition-list item** to the Android clipboard.
 | Root 管理 | Magisk 24.0 以上，並啟用內建 Zygisk；實機測試版本為 Magisk 30.7 |
 | CPU | `arm64-v8a`（64 位元 ARM） |
 | Android | Pikmin Bloom 本身支援的 Android 版本；模組原生程式以 Android API 28 以上為目標 |
-| 遊戲 | **Pikmin Bloom 150.0**，versionCode **1784893753** |
-| 安裝檔 | [`dist/pikmin-gps-copy-v150-r10.zip`](dist/pikmin-gps-copy-v150-r10.zip) |
+| 遊戲 | **Pikmin Bloom 151.0**，versionCode **1786062771** |
+| 安裝檔 | [`dist/pikmin-gps-copy-v151-r11.zip`](dist/pikmin-gps-copy-v151-r11.zip) |
 
 一般安裝與使用**不需要**電腦、ADB、LSPosed 或 Frida。
 
@@ -44,11 +44,11 @@ selected **Pikmin Bloom expedition-list item** to the Android clipboard.
 
 ### 安裝
 
-1. 下載 [`pikmin-gps-copy-v150-r10.zip`](dist/pikmin-gps-copy-v150-r10.zip)。
+1. 下載 [`pikmin-gps-copy-v151-r11.zip`](dist/pikmin-gps-copy-v151-r11.zip)。
 2. 可選：比對檔案 SHA-256：
 
    ```text
-   8B79AD60C4F33453E4B5F6963D1CBF1B8632C38FA83318EF26CD13BCF27E5478
+   DEBA6317E0F2D52447263AB0561A92C689C64309219F8070952435624CA2D995
    ```
 
 3. 開啟 Magisk →「設定」，確認 **Zygisk** 已啟用。
@@ -103,7 +103,7 @@ App 中完整關閉，再重新開啟一次。
 產物：
 
 - 原生模組：`build\zygisk\arm64-v8a.so`
-- Magisk 安裝包：`dist\pikmin-gps-copy-v150-r10.zip`
+- Magisk 安裝包：`dist\pikmin-gps-copy-v151-r11.zip`
 
 ADB/Android SDK 只在實機除錯時需要，不是建置或安裝的必要元件。
 
@@ -143,8 +143,8 @@ cancel, or modify an expedition.
 | Root manager | Magisk 24.0 or later with built-in Zygisk enabled; tested on Magisk 30.7 |
 | CPU | `arm64-v8a` (64-bit ARM) |
 | Android | A version supported by Pikmin Bloom; the native module targets Android API 28+ |
-| Game | **Pikmin Bloom 150.0**, versionCode **1784893753** |
-| Package | [`dist/pikmin-gps-copy-v150-r10.zip`](dist/pikmin-gps-copy-v150-r10.zip) |
+| Game | **Pikmin Bloom 151.0**, versionCode **1786062771** |
+| Package | [`dist/pikmin-gps-copy-v151-r11.zip`](dist/pikmin-gps-copy-v151-r11.zip) |
 
 Normal installation and use require **no** computer, ADB, LSPosed, or Frida.
 
@@ -155,11 +155,11 @@ Normal installation and use require **no** computer, ADB, LSPosed, or Frida.
 
 ### Installation
 
-1. Download [`pikmin-gps-copy-v150-r10.zip`](dist/pikmin-gps-copy-v150-r10.zip).
+1. Download [`pikmin-gps-copy-v151-r11.zip`](dist/pikmin-gps-copy-v151-r11.zip).
 2. Optional: verify the file's SHA-256:
 
    ```text
-   8B79AD60C4F33453E4B5F6963D1CBF1B8632C38FA83318EF26CD13BCF27E5478
+   DEBA6317E0F2D52447263AB0561A92C689C64309219F8070952435624CA2D995
    ```
 
 3. Open Magisk → Settings and make sure **Zygisk** is enabled.
@@ -218,7 +218,7 @@ If the NDK is not at the script's default path, specify it explicitly:
 Outputs:
 
 - Native module: `build\zygisk\arm64-v8a.so`
-- Magisk package: `dist\pikmin-gps-copy-v150-r10.zip`
+- Magisk package: `dist\pikmin-gps-copy-v151-r11.zip`
 
 ADB/the Android SDK is needed only for on-device debugging, not for building
 or installing the module.

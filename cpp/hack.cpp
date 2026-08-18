@@ -15,18 +15,31 @@
 
 namespace {
 
-constexpr char kTargetVersion[] = "150.0";
-constexpr int kTargetVersionCode = 1784893753;
+// Pikmin Bloom 151.0 / versionCode 1786062771.  These values are regenerated
+// from the matching global-metadata.dat and libil2cpp.so; do not reuse them
+// for another game build.
+constexpr char kTargetVersion[] = "151.0";
+constexpr int kTargetVersionCode = 1786062771;
 // ExpeditionListItem.<Start>b__34_0(Unit), the actual button callback. The
 // compiler duplicated OnClick into this lambda, so hooking OnClick itself
 // does not observe taps.
-constexpr uintptr_t kRvaListItemOnClick = 0x5E4AFA4;
-constexpr uintptr_t kRvaGetSpawnLocation = 0x5E6E954;
+constexpr uintptr_t kRvaListItemOnClick = 0x5F20300;
+constexpr uintptr_t kRvaGetSpawnLocation = 0x5F653D0;
 constexpr uintptr_t kListItemCurrentTaskOffset = 0xD8;
 
 constexpr uint8_t kListItemOnClickSignature[] = {
     0xFF, 0xC3, 0x00, 0xD1, 0xFE, 0x57, 0x01, 0xA9,
-    0xF4, 0x4F, 0x02, 0xA9, 0x54, 0x90, 0x04, 0xD0
+    0xF4, 0x4F, 0x02, 0xA9, 0xF4, 0x9A, 0x04, 0xF0,
+    0xF3, 0x03, 0x00, 0xAA, 0x88, 0x32, 0x4A, 0x39,
+    0x08, 0x01, 0x00, 0x37, 0x80, 0x7B, 0x04, 0xD0,
+    0x00, 0xC0, 0x2A, 0x91, 0x21, 0x00, 0x80, 0x52,
+    0x35, 0x00, 0x80, 0x52, 0xD4, 0xCA, 0xD1, 0x97
+};
+
+constexpr uint8_t kGetSpawnLocationSignature[] = {
+    0x00, 0x40, 0x40, 0xF9, 0x40, 0x00, 0x00, 0xB4,
+    0x03, 0x00, 0x00, 0x14, 0xFE, 0x0F, 0x1F, 0xF8,
+    0x8E, 0x23, 0xCF, 0x97, 0xFE, 0x0F, 0x1D, 0xF8
 };
 
 struct LatLng {
@@ -251,8 +264,16 @@ bool install_hook() {
         return true;
     }
 
-    g_get_spawn_location = reinterpret_cast<GetSpawnLocationFn>(
-        base + kRvaGetSpawnLocation);
+    auto *spawn_location_target =
+        reinterpret_cast<void *>(base + kRvaGetSpawnLocation);
+    if (memcmp(spawn_location_target, kGetSpawnLocationSignature,
+               sizeof(kGetSpawnLocationSignature)) != 0) {
+        LOGE("SpawnLocation signature mismatch; expected Pikmin %s (%d), refusing hook",
+             kTargetVersion, kTargetVersionCode);
+        return true;
+    }
+
+    g_get_spawn_location = reinterpret_cast<GetSpawnLocationFn>(spawn_location_target);
     A64HookFunction(click_target,
                     reinterpret_cast<void *>(hooked_list_item_on_click),
                     reinterpret_cast<void **>(&g_original_on_click));
