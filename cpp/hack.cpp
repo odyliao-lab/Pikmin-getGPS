@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <cstring>
 #include <mutex>
+#include <string>
 #include <thread>
 #include <time.h>
 #include <unistd.h>
@@ -57,6 +58,45 @@ std::mutex g_copy_mutex;
 double g_last_lat = 999.0;
 double g_last_lng = 999.0;
 int64_t g_last_copy_ms = 0;
+std::string g_game_data_dir;
+
+std::string state_path(const char *name) {
+    return g_game_data_dir.empty() ? std::string() : g_game_data_dir + "/files/" + name;
+}
+
+void write_status(const char *result, const LatLng *point = nullptr) {
+    const std::string path = state_path("gps_copy_status.tsv");
+    if (path.empty()) return;
+    FILE *file = fopen(path.c_str(), "w");
+    if (file == nullptr) return;
+    const double lat = point ? point->lat : 0.0;
+    const double lng = point ? point->lng : 0.0;
+    fprintf(file, "%lld\t%s\t%.7f\t%.7f\n",
+            static_cast<long long>(time(nullptr) * 1000), result, lat, lng);
+    fclose(file);
+}
+
+bool copy_is_enabled() {
+    const std::string path = state_path("gps_copy_mode.txt");
+    if (path.empty()) return true;
+    FILE *file = fopen(path.c_str(), "r");
+    if (file == nullptr) return true;  // Preserve the original no-control-file behavior.
+    char mode[16]{};
+    const bool enabled = fgets(mode, sizeof(mode), file) == nullptr ||
+                         strncmp(mode, "off", 3) != 0;
+    fclose(file);
+    return enabled;
+}
+
+void append_history(const LatLng &point) {
+    const std::string path = state_path("gps_copy_history.tsv");
+    if (path.empty()) return;
+    FILE *file = fopen(path.c_str(), "a");
+    if (file == nullptr) return;
+    fprintf(file, "%lld\tcopied\t%.7f\t%.7f\n",
+            static_cast<long long>(time(nullptr) * 1000), point.lat, point.lng);
+    fclose(file);
+}
 
 int64_t monotonic_ms() {
     timespec now{};
@@ -208,6 +248,12 @@ void copy_expedition_gps(void *expedition) {
     LatLng point = g_get_spawn_location(expedition, nullptr);
     if (!valid_coordinate(point)) {
         LOGW("selected expedition returned invalid GPS: %.7f,%.7f", point.lat, point.lng);
+        write_status("invalid-coordinate");
+        return;
+    }
+
+    if (!copy_is_enabled()) {
+        write_status("off", &point);
         return;
     }
 
@@ -228,8 +274,11 @@ void copy_expedition_gps(void *expedition) {
     snprintf(coordinates, sizeof(coordinates), "%.7f,%.7f", point.lat, point.lng);
     if (copy_to_clipboard_and_toast(coordinates)) {
         LOGI("GPS copied: %s", coordinates);
+        write_status("copied", &point);
+        append_history(point);
     } else {
         LOGE("failed to copy GPS: %s", coordinates);
+        write_status("clipboard-failed", &point);
     }
 }
 
@@ -261,6 +310,7 @@ bool install_hook() {
                sizeof(kListItemOnClickSignature)) != 0) {
         LOGE("signature mismatch; expected Pikmin %s (%d), refusing hook",
              kTargetVersion, kTargetVersionCode);
+        write_status("signature-mismatch");
         return true;
     }
 
@@ -270,6 +320,7 @@ bool install_hook() {
                sizeof(kGetSpawnLocationSignature)) != 0) {
         LOGE("SpawnLocation signature mismatch; expected Pikmin %s (%d), refusing hook",
              kTargetVersion, kTargetVersionCode);
+        write_status("spawn-signature-mismatch");
         return true;
     }
 
@@ -279,9 +330,11 @@ bool install_hook() {
                     reinterpret_cast<void **>(&g_original_on_click));
     if (g_original_on_click == nullptr) {
         LOGE("hook installation failed");
+        write_status("hook-failed");
     } else {
         LOGI("list-item click hook installed for Pikmin %s (%d): target=%p",
              kTargetVersion, kTargetVersionCode, click_target);
+        write_status("ready");
     }
     return true;
 }
@@ -289,7 +342,7 @@ bool install_hook() {
 }  // namespace
 
 void hack_prepare(const char *game_data_dir, JavaVM *vm) {
-    (void)game_data_dir;
+    g_game_data_dir = game_data_dir == nullptr ? "" : game_data_dir;
     g_vm = vm;
     for (int attempt = 0; attempt < 120; ++attempt) {
         if (install_hook()) return;
